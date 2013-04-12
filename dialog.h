@@ -30,7 +30,7 @@ private:
     char *src, *dst;
     int width, height, count;
 
-    void displayFrame();
+    bool displayFrame();
 };
 
 #endif // DIALOG_H

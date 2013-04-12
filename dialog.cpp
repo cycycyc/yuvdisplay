@@ -57,21 +57,27 @@ void Dialog::openFile()
 }
 
 void Dialog::nextFrame()
-{
-    ++count;
-    displayFrame();
+{  
+    if (displayFrame())
+    {
+        ++count;
+        ui->countLbl->setText(QString::number(count));
+    }
 }
 
 void Dialog::prevFrame()
 {
-    --count;
+    if (file->pos() - width * height * 3 < 0) return;
     file->seek(file->pos() - width * height * 3);
     displayFrame();
+    --count;
+    ui->countLbl->setText(QString::number(count));
 }
 
-void Dialog::displayFrame()
+bool Dialog::displayFrame()
 {
-    file->read(src, (int)(width * height * 1.5));
+    if (file->read(src, (int)(width * height * 1.5)) <= 0)
+        return false;
     yuv420_2_rgb888((uint8_t *)dst,                                 // dst addr
                     (uint8_t *)src,                                 // Y addr
                     (uint8_t *)src + (int)(width * height),         // U addr
@@ -85,7 +91,7 @@ void Dialog::displayFrame()
                     0);
 
     ui->picLbl->setPixmap(QPixmap::fromImage(QImage((uchar *)dst, width, height, QImage::Format_RGB888).rgbSwapped()));
-    ui->countLbl->setText(QString::number(count));
+    return true;
 }
 
 void Dialog::keyPressEvent(QKeyEvent *event)
