@@ -69,8 +69,8 @@ void Dialog::openFile()
     dst = new char[(int)(width * height * 3)];
     count = 0;
     ui->nameLbl->setText(filename);
-    ui->widthEdt->clearFocus();
-    ui->heightEdt->clearFocus();
+    ui->widthEdt->setDisabled(true);
+    ui->heightEdt->setDisabled(true);
     displayFrame();
 }
 
