@@ -20,6 +20,7 @@ public slots:
     void openFile();
     void nextFrame();
     void prevFrame();
+    void saveFrame();
     
 protected:
     virtual void keyPressEvent(QKeyEvent *event);

@@ -14,6 +14,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->openBtn, SIGNAL(clicked()), this, SLOT(openFile()));
     connect(ui->nextBtn, SIGNAL(clicked()), this, SLOT(nextFrame()));
     connect(ui->prevBtn, SIGNAL(clicked()), this, SLOT(prevFrame()));
+    connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(saveFrame()));
 
     file = NULL;
     src = NULL;
@@ -35,7 +36,7 @@ Dialog::~Dialog()
 
 void Dialog::openFile()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Select a yuv file", "/Users/chenyc/misc/*", "YUV file (*.yuv)");
+    QString filename = QFileDialog::getOpenFileName(this, "Select a yuv file", QDir::homePath() + "/Desktop/*", "YUV file (*.yuv)");
     if (file)
     {
         file->close();
@@ -72,6 +73,13 @@ void Dialog::prevFrame()
     displayFrame();
     --count;
     ui->countLbl->setText(QString::number(count));
+}
+
+void Dialog::saveFrame()
+{
+    QString filename = QFileDialog::getSaveFileName(this, "Select a save path", QDir::homePath() + "/Desktop", "*.bmp");
+    QImage image = QImage((uchar *)dst, width, height, QImage::Format_RGB888).rgbSwapped();
+    image.save(filename);
 }
 
 bool Dialog::displayFrame()
