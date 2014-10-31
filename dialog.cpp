@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QSettings>
 extern "C" {
 #include "yuv2rgb/yuv2rgb.h"
 }
@@ -21,6 +22,8 @@ Dialog::Dialog(QWidget *parent) :
     file = NULL;
     src = NULL;
     dst = NULL;
+
+    readSettings();
 }
 
 Dialog::~Dialog()
@@ -62,12 +65,16 @@ void Dialog::openFile()
     }
     file = new QFile(filename);
     if (!file->open(QIODevice::ReadOnly)) return;
+
     width = ui->widthEdt->text().toInt();
     height = ui->heightEdt->text().toInt();
+    writeSettings();
+
     if (src) delete[] src;
     if (dst) delete[] dst;
     src = new char[(int)(width * height * 1.5)];
     dst = new char[(int)(width * height * 3)];
+
     count = 0;
     total = (int)(file->size() / width / height / 1.5);
     ui->seekSlider->setMinimum(0);
@@ -75,6 +82,7 @@ void Dialog::openFile()
     ui->nameLbl->setText(filename);
     ui->widthEdt->setDisabled(true);
     ui->heightEdt->setDisabled(true);
+
     displayFrame();
 }
 
@@ -146,4 +154,24 @@ void Dialog::keyPressEvent(QKeyEvent *event)
     default:
         break;
     }
+}
+
+void Dialog::writeSettings()
+{
+    QSettings settings("cyc", "yuvdisplay");
+    settings.beginGroup("Dialog");
+    settings.setValue("width", width);
+    settings.setValue("height", height);
+    settings.endGroup();
+}
+
+void Dialog::readSettings()
+{
+    QSettings settings("cyc", "yuvdisplay");
+    settings.beginGroup("Dialog");
+    width = settings.value("width", 1920).toInt();
+    height = settings.value("height", 1080).toInt();
+    settings.endGroup();
+    ui->widthEdt->setText(QString::number(width));
+    ui->heightEdt->setText(QString::number(height));
 }

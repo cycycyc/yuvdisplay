@@ -35,6 +35,8 @@ private:
     int width, height, count, total;
 
     bool displayFrame();
+    void writeSettings();
+    void readSettings();
 };
 
 #endif // DIALOG_H
