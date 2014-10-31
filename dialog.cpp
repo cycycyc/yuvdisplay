@@ -16,6 +16,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->nextBtn, SIGNAL(clicked()), this, SLOT(nextFrame()));
     connect(ui->prevBtn, SIGNAL(clicked()), this, SLOT(prevFrame()));
     connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(saveFrame()));
+    connect(ui->seekSlider, SIGNAL(sliderMoved(int)), this, SLOT(seekFrame(int)));
 
     file = NULL;
     src = NULL;
@@ -60,7 +61,7 @@ void Dialog::openFile()
         delete file;
     }
     file = new QFile(filename);
-    file->open(QIODevice::ReadOnly);
+    if (!file->open(QIODevice::ReadOnly)) return;
     width = ui->widthEdt->text().toInt();
     height = ui->heightEdt->text().toInt();
     if (src) delete[] src;
@@ -68,6 +69,9 @@ void Dialog::openFile()
     src = new char[(int)(width * height * 1.5)];
     dst = new char[(int)(width * height * 3)];
     count = 0;
+    total = (int)(file->size() / width / height / 1.5);
+    ui->seekSlider->setMinimum(0);
+    ui->seekSlider->setMaximum(total);
     ui->nameLbl->setText(filename);
     ui->widthEdt->setDisabled(true);
     ui->heightEdt->setDisabled(true);
@@ -80,6 +84,7 @@ void Dialog::nextFrame()
     {
         ++count;
         ui->countLbl->setText(QString::number(count));
+        ui->seekSlider->setValue(count);
     }
 }
 
@@ -90,12 +95,21 @@ void Dialog::prevFrame()
     displayFrame();
     --count;
     ui->countLbl->setText(QString::number(count));
+    ui->seekSlider->setValue(count);
 }
 
 void Dialog::saveFrame()
 {
     QString filename = QFileDialog::getSaveFileName(this, "Select a save path", QDir::homePath() + "/Desktop", "*.bmp");
     image.save(filename);
+}
+
+void Dialog::seekFrame(int pos)
+{
+    count = pos;
+    ui->countLbl->setText(QString::number(count));
+    file->seek(count * width * height * 1.5);
+    displayFrame();
 }
 
 bool Dialog::displayFrame()

@@ -21,6 +21,7 @@ public slots:
     void nextFrame();
     void prevFrame();
     void saveFrame();
+    void seekFrame(int);
     
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
@@ -31,7 +32,7 @@ private:
     QFile *file;
     char *src, *dst;
     QImage image;
-    int width, height, count;
+    int width, height, count, total;
 
     bool displayFrame();
 };

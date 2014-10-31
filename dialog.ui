@@ -159,6 +159,13 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QSlider" name="seekSlider">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
