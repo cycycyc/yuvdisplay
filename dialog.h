@@ -24,11 +24,13 @@ public slots:
     
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
+    virtual void paintEvent(QPaintEvent *event);
 
 private:
     Ui::Dialog *ui;
     QFile *file;
     char *src, *dst;
+    QImage image;
     int width, height, count;
 
     bool displayFrame();

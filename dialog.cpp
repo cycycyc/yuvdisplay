@@ -2,6 +2,7 @@
 #include "ui_dialog.h"
 #include <QFileDialog>
 #include <QKeyEvent>
+#include <QPainter>
 extern "C" {
 #include "yuv2rgb/yuv2rgb.h"
 }
@@ -32,6 +33,22 @@ Dialog::~Dialog()
     }
     if (src) delete[] src;
     if (dst) delete[] dst;
+}
+
+void Dialog::paintEvent(QPaintEvent *event)
+{
+    QDialog::paintEvent(event);
+    QRect r, c;
+    QSize s = image.size();
+    c.setTopLeft(ui->picFrame->pos());
+    c.setSize(ui->picFrame->size());
+    r.setTopLeft(ui->picFrame->pos());
+    s.scale(ui->picFrame->size(), Qt::KeepAspectRatio);
+    r.setSize(s);
+    r.moveCenter(c.center());
+
+    QPainter p(this);
+    p.drawImage(r, image);
 }
 
 void Dialog::openFile()
@@ -78,7 +95,6 @@ void Dialog::prevFrame()
 void Dialog::saveFrame()
 {
     QString filename = QFileDialog::getSaveFileName(this, "Select a save path", QDir::homePath() + "/Desktop", "*.bmp");
-    QImage image = QImage((uchar *)dst, width, height, QImage::Format_RGB888).rgbSwapped();
     image.save(filename);
 }
 
@@ -98,7 +114,8 @@ bool Dialog::displayFrame()
                     yuv2rgb565_table,
                     0);
 
-    ui->picLbl->setPixmap(QPixmap::fromImage(QImage((uchar *)dst, width, height, QImage::Format_RGB888).rgbSwapped()));
+    image = QImage((uchar *)dst, width, height, QImage::Format_RGB888).rgbSwapped();
+    update();
     return true;
 }
 

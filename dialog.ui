@@ -150,12 +150,12 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="picLbl">
-     <property name="text">
-      <string/>
+    <widget class="QFrame" name="picFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="scaledContents">
-      <bool>true</bool>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
     </widget>
    </item>
